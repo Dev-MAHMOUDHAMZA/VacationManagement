@@ -1,0 +1,83 @@
+﻿@model VacationManagement.Models.VacationPlan
+
+@{
+    ViewData["Title"] = "Create";
+}
+
+<h4>VacationPlan</h4>
+<hr />
+<div class="row">
+    <div class="col-md-12">
+        <form asp-action="Create">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+            <div class="input-group mb-3">
+                <span class="input-group-text">Find Employee</span>
+                <input type="text" class="form-control" placeholder="Enter Name Employee" id="employeeName" name="employeeName">
+                <div class="input-group-append">
+                    <button class="btn btn-success" type="button" id="">Search</button>
+                </div>
+                <select class="form-control" id="ddlEmployees">
+                    <option value="">--------------- Search Employee --------------</option>
+                </select>
+            </div>
+            <span asp-validation-for="RequestVacation.EmployeeId" class="text-danger"></span>
+            <div class="form-group row">
+                <div class="form-group col-md-6">
+                    <label asp-for="RequestVacation.StartDate" class="control-label"></label>
+                    <input asp-for="RequestVacation.StartDate" class="form-control" type="date" />
+                    <span asp-validation-for="RequestVacation.StartDate" class="text-danger"></span>
+                </div>
+                <div class="form-group col-md-6">
+                    <label asp-for="RequestVacation.EndDate" class="control-label"></label>
+                    <input asp-for="RequestVacation.EndDate" class="form-control" type="date" />
+                    <span asp-validation-for="RequestVacation.EndDate" class="text-danger"></span>
+                </div>
+            </div>
+
+            <div class="form-row mt-3">
+                <h4>Include Days</h4>
+
+                <div class="form-group">
+                    @{
+                        DayOfWeek day;
+                        for (int i = 0; i < 7; i++)
+                        {
+                            day = (DayOfWeek)i;
+                            <label class="form-check-label m-4">
+                                <input type="checkbox" checked="checked" class="form-check-input" 
+                                    name="DayOfWeekCheckbox" value="@i">
+                                    @day.ToString()
+                            </label>
+
+                        }
+                    }
+                </div>
+
+            </div>
+
+            <div class="form-group w-50">
+                <label asp-for="RequestVacation.VacationTypeId" class="control-label"></label>
+                <select asp-for="RequestVacation.VacationTypeId" class="form-control" id="ddlVacationType">
+                </select>
+                <span asp-validation-for="RequestVacation.VacationTypeId" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="RequestVacation.Comment" class="control-label"></label>
+                <textarea asp-for="RequestVacation.Comment" class="form-control"></textarea>
+                <span asp-validation-for="RequestVacation.Comment" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <a asp-action="Index" class="btn btn-outline-dark">Back to List</a>|
+                <input type="submit" value="Create" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+
+@section Scripts {
+    @{
+    await Html.RenderPartialAsync("_ValidationScriptsPartial");
+}
+}
