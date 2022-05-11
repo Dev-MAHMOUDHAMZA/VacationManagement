@@ -26,6 +26,10 @@ namespace VacationManagement.Controllers
             return View();
         }
 
+        public IActionResult GetVacationTypes()
+        {
+            return Json(_context.VacationTypes.OrderBy(x=>x.Id).ToList());
+        }
         public IActionResult Delete(int? Id)
         {
             return View(_context.RequestVacations

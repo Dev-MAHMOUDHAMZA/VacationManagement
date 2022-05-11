@@ -15,7 +15,7 @@
                 <span class="input-group-text">Find Employee</span>
                 <input type="text" class="form-control" placeholder="Enter Name Employee" id="employeeName" name="employeeName">
                 <div class="input-group-append">
-                    <button class="btn btn-success" type="button" id="">Search</button>
+                    <button class="btn btn-success" type="button" id="" onclick="FindEmployee()">Search</button>
                 </div>
                 <select class="form-control" id="ddlEmployees">
                     <option value="">--------------- Search Employee --------------</option>
@@ -69,13 +69,13 @@
             </div>
             <div class="form-group">
                 <a asp-action="Index" class="btn btn-outline-dark">Back to List</a>|
-                <input type="submit" value="Create" class="btn btn-primary" />
+                <input type="submit" value="Create" class="btn btn-primary"/>
             </div>
         </form>
     </div>
 </div>
 
-
+<script src="~/Module/VacationPlan.js"></script>
 @section Scripts {
     @{
     await Html.RenderPartialAsync("_ValidationScriptsPartial");
