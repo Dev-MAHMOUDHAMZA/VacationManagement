@@ -26,6 +26,38 @@ namespace VacationManagement.Controllers
             return View();
         }
 
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public IActionResult Create(VacationPlan model, int[] DayOfWeekCheckbox)
+        {
+            if (ModelState.IsValid) 
+            {
+                var Result = _context.VacationPlans
+                    .Where(x => x.RequestVacation.EmployeeId == model.RequestVacation.EmployeeId
+                    && x.VacationDate >= model.RequestVacation.StartDate
+                    && x.VacationDate <= model.RequestVacation.EndDate).FirstOrDefault();
+                if(Result != null)
+                {
+                    ViewBag.ErrorVacation = false;
+                    return View(model);
+                }
+
+                for (DateTime date = model.RequestVacation.StartDate;
+                    date <= model.RequestVacation.EndDate; date = date.AddDays(1))
+                {
+                    if (Array.IndexOf(DayOfWeekCheckbox,(int)date.DayOfWeek) != -1)
+                    {
+                        model.Id = 0;
+                        model.VacationDate = date;
+                        model.RequestVacation.RequestDate = DateTime.Now;
+                        _context.VacationPlans.Add(model);
+                        _context.SaveChanges();
+                    }
+                }
+                return RedirectToAction("Index");
+            }
+            return View(model);
+        }
         public IActionResult GetVacationTypes()
         {
             return Json(_context.VacationTypes.OrderBy(x=>x.Id).ToList());
