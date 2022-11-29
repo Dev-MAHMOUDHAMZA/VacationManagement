@@ -58,6 +58,35 @@ namespace VacationManagement.Controllers
             }
             return View(model);
         }
+        public IActionResult Edit(int? Id)
+        {
+            ViewBag.Employees = _context.Employees.OrderBy(x => x.Name).ToList();
+            ViewBag.VactionTypes = _context.VacationTypes.OrderBy(x => x.VacationName).ToList();
+            return View(_context.RequestVacations
+                .Include(x=>x.Employee)
+                .Include(x=>x.VacationType)
+                .Include(x=>x.VacationPlanList).FirstOrDefault(x=>x.Id==Id));
+        }
+        [HttpPost]
+        [AutoValidateAntiforgeryToken]
+        public IActionResult Edit(RequestVacation model)
+        {
+            if (ModelState.IsValid)
+            {
+                if (model.Approved == true)
+                    model.DateApproved = DateTime.Now;
+                _context.RequestVacations.Update(model);
+                _context.SaveChanges();
+                return RedirectToAction("Index");
+            }
+            ViewBag.Employees = _context.Employees.OrderBy(x => x.Name).ToList();
+            ViewBag.VactionTypes = _context.VacationTypes.OrderBy(x => x.VacationName).ToList();
+            return View(model);
+        }
+        public IActionResult GetCountVacationEmployee(int Id)
+        {
+            return Json(_context.VacationPlans.Where(x=>x.RequestVacationId == Id).Count());
+        }
         public IActionResult GetVacationTypes()
         {
             return Json(_context.VacationTypes.OrderBy(x=>x.Id).ToList());
@@ -81,6 +110,63 @@ namespace VacationManagement.Controllers
                 return RedirectToAction("Index");
             }
             return View(model);
+        }
+
+        public IActionResult ViewReportVactionPlan()
+        {
+            ViewBag.Employees = _context.Employees.ToList();
+            return View();
+        }
+
+        public IActionResult ViewReportVactionPlan2()
+        {
+            ViewBag.Employees = _context.Employees.ToList();
+            return View();
+        }
+        public IActionResult GetReportVactionPlan
+                (int EmployeeId,DateTime FromDate,DateTime ToDate)
+        {
+            string Id = "";
+            if (EmployeeId != 0 && EmployeeId.ToString() != "")
+                Id = $"and Employees.Id={EmployeeId}";
+            #region MyRegion
+            //      var sqlQuery = _context.SqlDataTable($@"SELECT Distinct dbo.Employees.Id, dbo.Employees.Name,
+            //            dbo.Employees.VacationBalance,
+            //Sum(dbo.VacationTypes.NumberDays) As TotalVacation,
+            //dbo.Employees.VacationBalance - Sum(dbo.VacationTypes.NumberDays) As Total
+            //            FROM dbo.Employees INNER JOIN
+            //            dbo.RequestVacations ON dbo.Employees.Id = dbo.RequestVacations.EmployeeId INNER JOIN
+            //            dbo.VacationPlans ON dbo.RequestVacations.Id = dbo.VacationPlans.RequestVacationId INNER JOIN
+            //            dbo.VacationTypes ON dbo.RequestVacations.VacationTypeId = dbo.VacationTypes.Id
+            //   where VacationPlans.VacationDate between 
+            //            '" + FromDate.ToString("yyyy-MM-dd") + "' and '" + ToDate.ToString("yyyy-MM-dd") + "' "+
+            //            " and RequestVacations.Approved = 'True'" +
+            //            $"{Id} Group By dbo.Employees.Id, dbo.Employees.Name, dbo.Employees.VacationBalance"); 
+            #endregion
+
+            #region MyRegion
+            //      string sqlQuery =$@"SELECT Distinct dbo.Employees.Id, dbo.Employees.Name,
+            //            dbo.Employees.VacationBalance,
+            //Sum(dbo.VacationTypes.NumberDays) As TotalVacation,
+            //dbo.Employees.VacationBalance - Sum(dbo.VacationTypes.NumberDays) As Total
+            //            FROM dbo.Employees INNER JOIN
+            //            dbo.RequestVacations ON dbo.Employees.Id = dbo.RequestVacations.EmployeeId INNER JOIN
+            //            dbo.VacationPlans ON dbo.RequestVacations.Id = dbo.VacationPlans.RequestVacationId INNER JOIN
+            //            dbo.VacationTypes ON dbo.RequestVacations.VacationTypeId = dbo.VacationTypes.Id
+            //   where VacationPlans.VacationDate between 
+            //            '" + FromDate.ToString("yyyy-MM-dd") + "' and '" + ToDate.ToString("yyyy-MM-dd") + "' " +
+            //            " and RequestVacations.Approved = 'True'" +
+            //            $"{Id} Group By dbo.Employees.Id, dbo.Employees.Name, dbo.Employees.VacationBalance"; 
+            #endregion
+
+
+            //var SpGetData = _context.SpGetReportVacationPlans.FromSqlRaw(sqlQuery).ToList();
+
+            var SpGetData = _context.SpGetReportVacationPlans
+                        .FromSqlRaw("SpGetReportVacationPlans {0},{1},{2}", EmployeeId, FromDate, ToDate).ToList();
+
+            ViewBag.Employees = _context.Employees.ToList();
+            return View("ViewReportVactionPlan2", SpGetData);
         }
     }
 }

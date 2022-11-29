@@ -1,0 +1,67 @@
+﻿@model System.Data.DataTable
+@using System.Data
+@{
+    ViewData["Title"] = "ViewReportVactionPlan";
+}
+
+<h1>ViewReportVactionPlan</h1>
+
+<form asp-controller="VacationPlans" asp-action="GetReportVactionPlan">
+    <div class="row">
+        <div class="form-group col-md-6">
+            <label class="control-lable">From Date</label>
+            <input type="date" name="FromDate" class="form-control" value="@(DateTime.Now.ToString("yyyy"))-01-01" />
+        </div>
+
+        <div class="form-group col-md-6">
+            <label class="control-lable">To Date</label>
+            <input type="date" name="ToDate" class="form-control" value="@(DateTime.Now.ToString("yyyy"))-12-30" />
+        </div>
+
+        <div class="form-group col-md-6">
+            <label class="control-lable">Employees</label>
+            <select class="form-control" name="EmployeeId" asp-items="@(new SelectList(ViewBag.Employees,"Id","Name"))">
+                <option value="0">----- Select Employee -----</option>
+            </select>
+        </div>
+        <div class="form-group col-md-2 mt-4 mb-5">
+            <input type="submit" class="btn btn-primary col-md-12" value="Search" />
+        </div>
+
+        <div class="form-group col-md-2 mt-4 mb-5">
+            <input type="submit" class="btn btn-info col-md-12" value="Print" />
+        </div>
+        <div class="form-group col-md-2 mt-4 mb-5">
+            <input type="submit" class="btn btn-success col-md-12" value="Download PDF" />
+        </div>
+    </div>
+</form>
+
+@if(Model != null){
+
+    <table class="table">
+        <thead>
+            <tr>
+                @foreach (DataColumn col in Model.Columns)
+                {
+                    <th>@col.ColumnName</th>
+                }
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (DataRow row in Model.Rows)
+            {
+                <tr>
+                    @foreach (DataColumn col in Model.Columns)
+                    {
+                        <th>@row[col.ColumnName]</th>
+                    }
+                </tr>
+            }
+        </tbody>
+
+    </table>
+
+}
+else{<h4 class="alert alert-danger">No Data ........................................</h4>}
+
